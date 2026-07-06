@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/menu_item.dart';
 import '../services/firestore_service.dart';
+import '../utils/icon_helper.dart';
 import 'menu_form.dart';
 
 class MenuPage extends StatelessWidget {
@@ -13,7 +14,7 @@ class MenuPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pizza Menu'),
+        title: const Text('🍕 Pizza Menu'),
       ),
       body: StreamBuilder<List<MenuItem>>(
         stream: service.getMenuItems(),
@@ -43,20 +44,39 @@ class MenuPage extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+                  Container(
+                    margin: const EdgeInsets.only(top: 10, bottom: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.deepOrange,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                     child: Text(
                       category,
                       style: const TextStyle(
-                        fontSize: 20,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                   ...categoryItems.map((item) {
                     return Card(
+                      elevation: 3,
                       margin: const EdgeInsets.only(bottom: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
                       child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.orange.shade100,
+                          child: Icon(
+                            getCategoryIcon(item.category),
+                            color: Colors.deepOrange,
+                          ),
+                        ),
                         title: Text(
                           item.name,
                           style: const TextStyle(fontWeight: FontWeight.bold),
@@ -64,7 +84,6 @@ class MenuPage extends StatelessWidget {
                         subtitle: Text(
                           'RM ${item.price.toStringAsFixed(2)}',
                         ),
-                        leading: const Icon(Icons.local_pizza),
                         trailing: Wrap(
                           spacing: 4,
                           children: [
@@ -125,7 +144,9 @@ class MenuPage extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        icon: const Icon(Icons.add),
+        backgroundColor: Colors.deepOrange,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add_circle),
         label: const Text('Add Menu'),
         onPressed: () {
           Navigator.push(

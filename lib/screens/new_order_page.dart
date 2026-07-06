@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/menu_item.dart';
 import '../models/order_item.dart';
 import '../services/firestore_service.dart';
+import '../utils/icon_helper.dart';
 
 class NewOrderPage extends StatefulWidget {
   const NewOrderPage({super.key});
@@ -142,41 +143,74 @@ class _NewOrderPageState extends State<NewOrderPage> {
                   ),
                 ),
                 Expanded(
-                  child: ListView.builder(
+                  child: ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
-                    itemCount: menuItems.length,
-                    itemBuilder: (context, index) {
-                      final item = menuItems[index];
-                      final qty = _quantities[item.id] ?? 0;
+                    children: menuItems.map((item) => item.category).toSet().map((category) {
+                      final categoryItems =
+                          menuItems.where((item) => item.category == category).toList();
 
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        child: ListTile(
-                          leading: const Icon(Icons.local_pizza),
-                          title: Text(item.name),
-                          subtitle: Text(
-                            '${item.category} • RM ${item.price.toStringAsFixed(2)}',
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(top: 10, bottom: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.deepOrange,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              category,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                onPressed: () => _decreaseQty(item.id),
-                                icon: const Icon(Icons.remove_circle_outline),
+                          ...categoryItems.map((item) {
+                            final qty = _quantities[item.id] ?? 0;
+
+                            return Card(
+                              elevation: 3,
+                              margin: const EdgeInsets.only(bottom: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),
                               ),
-                              Text(
-                                '$qty',
-                                style: const TextStyle(fontSize: 16),
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: Colors.orange.shade100,
+                                  child: Icon(
+                                    getCategoryIcon(item.category),
+                                    color: Colors.deepOrange,
+                                  ),
+                                ),
+                                title: Text(
+                                  item.name,
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Text(
+                                  '${item.category} • RM ${item.price.toStringAsFixed(2)}',
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () => _decreaseQty(item.id),
+                                      icon: const Icon(Icons.remove_circle_outline),
+                                    ),
+                                    Text('$qty'),
+                                    IconButton(
+                                      onPressed: () => _increaseQty(item.id),
+                                      icon: const Icon(Icons.add_circle_outline),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              IconButton(
-                                onPressed: () => _increaseQty(item.id),
-                                icon: const Icon(Icons.add_circle_outline),
-                              ),
-                            ],
-                          ),
-                        ),
+                            );
+                          }),
+                        ],
                       );
-                    },
+                    }).toList(),
                   ),
                 ),
                 Container(

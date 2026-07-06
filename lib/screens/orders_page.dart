@@ -17,25 +17,53 @@ class _OrdersPageState extends State<OrdersPage> {
   final _service = FirestoreService();
   String _selectedStatus = 'Pending';
 
+  IconData _getStatusIcon(String status) {
+    switch (status) {
+      case 'Pending':
+        return Icons.hourglass_bottom;
+      case 'Preparing':
+        return Icons.restaurant;
+      case 'Served':
+        return Icons.room_service;
+      case 'Paid':
+        return Icons.payments;
+      default:
+        return Icons.receipt_long;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Orders'),
+        title: const Text('🧾 Orders'),
       ),
       body: Column(
         children: [
           SizedBox(
-            height: 56,
+            height: 64,
             child: ListView(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               children: AppConstants.orderStatuses.map((status) {
+                final selected = _selectedStatus == status;
+
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: ChoiceChip(
+                    avatar: Icon(
+                      _getStatusIcon(status),
+                      size: 18,
+                      color: selected ? Colors.white : Colors.deepOrange,
+                    ),
                     label: Text(status),
-                    selected: _selectedStatus == status,
+                    selected: selected,
+                    selectedColor: Colors.deepOrange,
+                    backgroundColor: Colors.orange.shade50,
+                    labelStyle: TextStyle(
+                      color: selected ? Colors.white : Colors.deepOrange,
+                      fontWeight: FontWeight.bold,
+                    ),
                     onSelected: (_) {
                       setState(() {
                         _selectedStatus = status;
@@ -75,10 +103,23 @@ class _OrdersPageState extends State<OrdersPage> {
                     final order = orders[index];
 
                     return Card(
+                      elevation: 3,
                       margin: const EdgeInsets.only(bottom: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
                       child: ListTile(
-                        leading: const Icon(Icons.table_restaurant),
-                        title: Text('Table ${order.tableNo}'),
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.orange.shade100,
+                          child: Icon(
+                            _getStatusIcon(order.status),
+                            color: Colors.deepOrange,
+                          ),
+                        ),
+                        title: Text(
+                          'Table ${order.tableNo}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         subtitle: Text(
                           '${order.status} • RM ${order.total.toStringAsFixed(2)}',
                         ),
@@ -101,7 +142,9 @@ class _OrdersPageState extends State<OrdersPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        icon: const Icon(Icons.add),
+        backgroundColor: Colors.deepOrange,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.add_circle),
         label: const Text('New Order'),
         onPressed: () {
           Navigator.push(
