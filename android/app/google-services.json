@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "278560296286",
+    "project_id": "pizza-restaurant-order-system",
+    "storage_bucket": "pizza-restaurant-order-system.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:278560296286:android:7a2882f151990e288d53cf",
+        "android_client_info": {
+          "package_name": "com.example.resto_order"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2RX19ebFlq_JoCzIq14qFc7YweoHy5G0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
